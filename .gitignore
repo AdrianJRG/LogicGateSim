@@ -11,7 +11,7 @@ CMakeLists.txt
 *.ko
 *.obj
 *.elf
-
+*.swp
 # Linker output
 *.ilk
 *.map
