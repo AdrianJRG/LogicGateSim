@@ -10,7 +10,7 @@
 /*
  * simulates tree from given node until inputs
  */
-int simulate_tree(struct node *leaf){
+int simulate_tree(Gate *leaf){
     switch(leaf->gate){
         case OR:
             if(simulate_tree(leaf->left) == 1 || simulate_tree(leaf->right) == 1){
@@ -51,7 +51,7 @@ int simulate_tree(struct node *leaf){
 /*
  * Destroys everything below the given node, as well as the node itself
  */
-void destroy_tree(struct node *leaf){
+void destroy_tree(Gate *leaf){
     if(leaf != 0){
         destroy_tree(leaf->left);
         destroy_tree(leaf->right);
@@ -63,7 +63,7 @@ void destroy_tree(struct node *leaf){
  * Checks if left is empty, then if right is empty
  * Places the branch to insert at the first empty node found.
  */
-void insert_tree(struct node *leafToInsert, struct node *leafToAttachTo){
+void insert_tree(Gate *leafToInsert, Gate *leafToAttachTo){
 
     if(leafToAttachTo->left == 0){
         leafToAttachTo->left = leafToInsert;
@@ -80,7 +80,7 @@ void insert_tree(struct node *leafToInsert, struct node *leafToAttachTo){
 /*
  * Searches node and all those under it for uid
  */
-struct node *search_tree(uint8_t uid, struct node *leaf){
+Gate *search_tree(uint8_t uid, Gate *leaf){
 
     /*
      * 1. Check if this leaf is the one being searched for
@@ -93,7 +93,7 @@ struct node *search_tree(uint8_t uid, struct node *leaf){
         return leaf;
     }
 
-    struct node *n = NULL; // Might need to be 0 (?), based on some c++ code
+    Gate *n = NULL; // Might need to be 0 (?), based on some c++ code
 
     if(leaf->left != 0)
         n = search_tree(uid, leaf->left);
@@ -111,7 +111,7 @@ struct node *search_tree(uint8_t uid, struct node *leaf){
 /*
  * Counts total nodes in tree
  */
-int count_tree(struct node *leaf){
+int count_tree(Gate *leaf){
     if(leaf != 0){
         // itself, sum of left, sum of right
         return 1 + count_tree(leaf->left) + count_tree(leaf->right);

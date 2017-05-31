@@ -11,12 +11,12 @@
 typedef enum {OR, AND, XOR, NOT, END, INPUT_ON, INPUT_OFF} gate_type;
 
 /* Simulator will be stored in a binary tree */
-struct node{
+typedef struct GateTag{
     uint8_t uid;
     gate_type gate;
-    struct node *left;
-    struct node *right;
-};
+    Gate *left;
+    Gate *right;
+} Gate;
 
 
 #endif //LOGICGATESIM_SIMULATOR_H
