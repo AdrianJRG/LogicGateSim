@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char** argv) {
 	int isRunning = 1;
@@ -16,7 +18,7 @@ int main(int argc, char** argv) {
 	}
 	while(isRunning)
 	{
-		fget(readLine, sizeof(readLine), stdin);
+		fgets(readLine, sizeof(readLine), stdin);
 		if(strcmp(readLine, "quit"))
 		{
 			isRunning = 0;
