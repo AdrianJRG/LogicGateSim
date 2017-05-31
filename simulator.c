@@ -10,31 +10,31 @@
 /*
  * simulates tree from given node until inputs
  */
-int simulate_tree(Gate *leaf){
-    switch(leaf->gate){
+int simulate_tree(Gate *gate_node){
+    switch(gate_node->gate){
         case OR:
-            if(simulate_tree(leaf->left) == 1 || simulate_tree(leaf->right) == 1){
+            if(simulate_tree(gate_node->left) == 1 || simulate_tree(gate_node->right) == 1){
                 return 1;
             } else {
                 return 0;
             }
             break;
         case AND:
-            if(simulate_tree(leaf->left) == 1 && simulate_tree(leaf->right) == 1){
+            if(simulate_tree(gate_node->left) == 1 && simulate_tree(gate_node->right) == 1){
                 return 1;
             } else {
                 return 0;
             }
             break;
         case XOR:
-            if(simulate_tree(leaf->left) != simulate_tree(leaf->right)){
+            if(simulate_tree(gate_node->left) != simulate_tree(gate_node->right)){
                 return 1;
             } else {
                 return 0;
             }
             break;
         case NOT:
-            return !simulate_tree(leaf->left);
+            return !simulate_tree(gate_node->left);
             break;
         case INPUT_ON:
             return 1;
@@ -51,11 +51,11 @@ int simulate_tree(Gate *leaf){
 /*
  * Destroys everything below the given node, as well as the node itself
  */
-void destroy_tree(Gate *leaf){
-    if(leaf != 0){
-        destroy_tree(leaf->left);
-        destroy_tree(leaf->right);
-        free(leaf);
+void destroy_tree(Gate *gate_node){
+    if(gate_node != 0){
+        destroy_tree(gate_node->left);
+        destroy_tree(gate_node->right);
+        free(gate_node);
     }
 }
 
@@ -63,13 +63,13 @@ void destroy_tree(Gate *leaf){
  * Checks if left is empty, then if right is empty
  * Places the branch to insert at the first empty node found.
  */
-void insert_tree(Gate *leafToInsert, Gate *leafToAttachTo){
+void insert_tree(Gate *gate_nodeToInsert, Gate *gate_nodeToAttachTo){
 
-    if(leafToAttachTo->left == 0){
-        leafToAttachTo->left = leafToInsert;
+    if(gate_nodeToAttachTo->left == 0){
+        gate_nodeToAttachTo->left = gate_nodeToInsert;
         return;
-    } else if (leafToAttachTo->right == 0 && leafToAttachTo->gate != NOT){  // makes sure not gates only have 1 input
-        leafToAttachTo->right = leafToInsert;
+    } else if (gate_nodeToAttachTo->right == 0 && gate_nodeToAttachTo->gate != NOT){  // makes sure not gates only have 1 input
+        gate_nodeToAttachTo->right = gate_nodeToInsert;
         return;
     }
 
@@ -80,28 +80,28 @@ void insert_tree(Gate *leafToInsert, Gate *leafToAttachTo){
 /*
  * Searches node and all those under it for uid
  */
-Gate *search_tree(uint8_t uid, Gate *leaf){
+Gate *search_tree(uint8_t uid, Gate *gate_node){
 
     /*
-     * 1. Check if this leaf is the one being searched for
-     *      if yes, return leaf
-     * 2. Check if left leaf is the one
+     * 1. Check if this gate_node is the one being searched for
+     *      if yes, return gate_node
+     * 2. Check if left gate_node is the one
      *
-     * 3. Check if right leaf is the one
+     * 3. Check if right gate_node is the one
      */
-    if(leaf->uid == uid){
-        return leaf;
+    if(gate_node->uid == uid){
+        return gate_node;
     }
 
     Gate *n = NULL; // Might need to be 0 (?), based on some c++ code
 
-    if(leaf->left != 0)
-        n = search_tree(uid, leaf->left);
+    if(gate_node->left != 0)
+        n = search_tree(uid, gate_node->left);
     if(n != NULL)
         return n;
 
-    if(leaf->right != 0)
-        n = search_tree(uid, leaf->right);
+    if(gate_node->right != 0)
+        n = search_tree(uid, gate_node->right);
     if(n != NULL)
         return n;
 
@@ -111,10 +111,10 @@ Gate *search_tree(uint8_t uid, Gate *leaf){
 /*
  * Counts total nodes in tree
  */
-int count_tree(Gate *leaf){
-    if(leaf != 0){
+int count_tree(Gate *gate_node){
+    if(gate_node != 0){
         // itself, sum of left, sum of right
-        return 1 + count_tree(leaf->left) + count_tree(leaf->right);
+        return 1 + count_tree(gate_node->left) + count_tree(gate_node->right);
     } else {
         return 0;
     }

@@ -14,9 +14,16 @@ typedef enum {OR, AND, XOR, NOT, END, INPUT_ON, INPUT_OFF} gate_type;
 typedef struct GateTag{
     uint8_t uid;
     gate_type gate;
-    Gate *left;
-    Gate *right;
+    struct GateTag *left;
+    struct GateTag *right;
 } Gate;
+
+/* Function prototypes */
+int simulate_tree(Gate *gate_node);
+void destroy_tree(Gate *gate_node);
+void insert_tree(Gate *gate_nodeToInsert, Gate *gate_nodeToAttachTo);
+Gate *search_tree(uint8_t uid, Gate *gate_node);
+int count_tree(Gate *gate_node);
 
 
 #endif //LOGICGATESIM_SIMULATOR_H
