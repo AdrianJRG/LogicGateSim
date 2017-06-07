@@ -1,2 +1,1 @@
-int readFile(char* fileName,int* arraySize, char** content);
-int writeFile(char* fileName, int* arraySize, char** content);
+int readFile(char* fileName,int* arraySizeContent, int* arraySizeInput, char** content, int** input);
