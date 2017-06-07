@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "IOfile.h"
+#include "simulator.h"
 /*
  * Things this will do:
  *
@@ -14,7 +16,18 @@
  */
 
 /*
- * helper functions for simulate and simulate_save
+ * global vars
+ */
+
+int* sizeContent;
+int* sizeInput;
+char** content;
+int** input;
+
+Gate *root;
+
+/*
+ * helper functions
  */
 
 void strSplit(char* strInput, char** strOutput)
@@ -27,46 +40,42 @@ void strSplit(char* strInput, char** strOutput)
 		p = strtok(NULL, " ");
 	}
 }
-void setInputFile(char* inputFile){
 
+void create_tree_from_file(char* inputFile){
+    readFile(inputFile, sizeContent, sizeInput, content, input);
+    *root = create_gates(*sizeContent, content);
 }
 
-void setOutputFile(char* outputFile){
-
-}
-
-char** getGateArray(){
-
-}
-
-char** getInputArray(){
-
-}
 /*
  * End of helper functions
  */
 
 int simulate(char* inputFile){
-    /* open file in IOfile */
-    setInputFile(inputFile);
+    create_tree_from_file(inputFile);
 
-    // get_gates() <-- returns pointer to array of char arrays
-
-    // turn those into gates
-
-    // add the gates to tree in simulator
+    //prints results from simulations
+    for(int i = 0; i < *sizeInput; i++){
+        add_input_to_tree(input[i], root);
+        int result = simulate_tree(root);
+        printf("%d\n", result);
+        remove_inputs_from_tree(root);
+    }
+    return 0;
 }
 
 int simulateSave(char* inputFile, char* outputFile){
     simulate(inputFile);
 
+    printf("simulateSave not implemented");
+
+    return 999;
 
 }
 
 void showTree(char* inputFile){
-
+    printf("showTree not implemented");
 }
 
 void saveFile(char* outputFile){
-
+    printf("saveTree not implemented");
 }
