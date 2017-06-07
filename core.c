@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 /*
  * Things this will do:
  *
@@ -13,6 +16,17 @@
 /*
  * helper functions for simulate and simulate_save
  */
+
+void strSplit(char* strInput, char** strOutput)
+{
+	char* p = strtok(strInput, " ");
+	int i = 0;
+	while(p !=NULL)
+	{	
+		strOutput[i++] = p;
+		p = strtok(NULL, " ");
+	}
+}
 void setInputFile(char* inputFile){
 
 }

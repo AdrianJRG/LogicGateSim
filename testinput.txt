@@ -1,0 +1,5 @@
+A AND B
+B XOR C
+
+INPUT
+100011

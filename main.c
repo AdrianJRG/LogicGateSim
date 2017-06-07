@@ -3,7 +3,6 @@
 #include <string.h>
 #include "core.h"
 
-void strSplit(char* strInput, char* strOutput[2]);
 int main(int argc, char** argv) {
 	int isRunning = 1;
 	char readLine[100];
@@ -57,13 +56,3 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void strSplit(char* strInput, char* strOutput[2])
-{
-	char* p = strtok(strInput, " ");
-	int i = 0;
-	while(p != NULL)
-	{
-		strOutput[i++] = p;
-		p = strtok(NULL, " ");
-	}	
-}
