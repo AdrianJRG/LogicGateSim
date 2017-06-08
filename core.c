@@ -79,3 +79,47 @@ void showTree(char* inputFile){
 void saveFile(char* outputFile){
     printf("saveTree not implemented");
 }
+
+
+/*
+ * temp funtions
+ */
+
+void test_data(){
+    printf("Now in code.c test_data()\n");
+
+    printf("Test data array creation\n");
+    char* test_data_array[5][3] = {
+            {"A", "AND", "B"},
+            {"C", "AND", "B"},
+            {"D", "NOT", "E"},
+            {"B", "OR", "E"},
+            {"E", "AND", "END"}
+    };
+
+    char* test_row1[3] = {"A", "AND", "B"};
+    char* test_test[2] = {
+            *test_row1,
+
+    };
+
+    printf("TEST_ARRAY\n");
+    //TEST_ARRAY(5, test_data_array);
+    printf("Calling create_gates from simulator\n");
+    *root = create_gates(5, test_data_array);
+
+    printf("Creating test input data array\n");
+    int test_data_inputs[2][5] = {
+            {1, 1, 1, 1, 0},
+            {0, 0, 0, 1, 1}
+    };
+
+    for(int i = 0; i < 2; i++){
+        add_input_to_tree(test_data_inputs[i], root);
+        int result = simulate_tree(root);
+        printf("%d\n", result);
+        remove_inputs_from_tree(root);
+    }
+
+    printf("End of test_data()");
+}

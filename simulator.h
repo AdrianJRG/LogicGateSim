@@ -25,11 +25,11 @@ void destroy_tree(Gate *gate_node);
 void insert_tree(Gate *gate_nodeToInsert, Gate *gate_nodeToAttachTo);
 Gate *search_tree(uint8_t uid, Gate *gate_node);
 int count_tree(Gate *gate_node);
-Gate create_gates(int arraySize, char** content);
+Gate create_gates(int arraySize, char*** content);
 void recursive_tree_build(int arraySize, char** content, Gate gate);
 gate_type get_gate_type(char* gateString);
 int add_input_to_tree(int* input, Gate* gate_node);
 void remove_inputs_from_tree(Gate* gate_node);
-
+void TEST_ARRAY(int arraySize, char*** constant);
 
 #endif //LOGICGATESIM_SIMULATOR_H

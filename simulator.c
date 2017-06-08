@@ -123,9 +123,14 @@ int count_tree(Gate *gate_node){
     }
 }
 
-Gate create_gates(int arraySize, char** content){
+Gate create_gates(int arraySize, char*** content){
+    printf("\tNow in simulator.c create_gates\n");
+
     for(int i = 0; i < arraySize; i++){
+        printf("%s", content[i]); printf("\n");
+        //printf(&content[14][0]); printf("\n");
         if(strcmp(&content[i][2], "END") == 0){
+            printf("\tFound END gate\n");
             Gate rootGate;
             rootGate.name = &content[i][0];
             rootGate.gate = get_gate_type(&content[i][1]);
@@ -134,13 +139,21 @@ Gate create_gates(int arraySize, char** content){
             gateStorageCounter++;
             *root = gateStorageArray[gateStorageCounter];
 
+            printf("\tStarting recursive_tree_build\n");
             recursive_tree_build(arraySize, content, *root);
 
             return *root;
         }
     }
-    return NULL;
+    printf("\n\nError:\tDid not find END gate\n");
+    return *root;
 }
+//
+//void TEST_ARRAY(int arraySize, char*** content){
+//    for(int i = 0; i < arraySize; i++){
+//        printf(content[i]); printf("\n");
+//    }
+//}
 
 void recursive_tree_build(int arraySize, char** content, Gate gate){
     int branchesFilled = 0;
@@ -194,7 +207,7 @@ gate_type get_gate_type(char* gateString){
     if(strcmp(gateString, "NOT")) return NOT;
     if(strcmp(gateString, "AND")) return AND;
 
-    return NULL;
+    return END;
 }
 
 int add_input_to_tree(int* input, Gate* gate_node){

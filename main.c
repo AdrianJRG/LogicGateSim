@@ -48,6 +48,12 @@ int main(int argc, char** argv) {
 		{
 			isRunning = 0;
 		}
+		else if(strcmp(arguments[0], "test")==0)
+		{
+			printf("Starting test_data()\n");
+			test_data();
+			printf("Finished test_data()\n");
+		}
 		else
 		{
 			printf("Didn't recognize the input\n");
