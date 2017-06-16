@@ -7,13 +7,12 @@ int main(int argc, char** argv) {
 	int isRunning = 1;
 	char readLine[100];
 	char* arguments[2];
-	char* file = "testinput.txt";
+	char* file = "./testinput.txt";
 	int size;
 	int size2;
-	char* content[100];
-	int* input[100];
+	char** content;
+	int** input;
 	int i;
-	readFile(file,&size,&size2,content, input);
 	for(i = 0; i < size; i++)
 	{
 		printf("%s",content[i]);
