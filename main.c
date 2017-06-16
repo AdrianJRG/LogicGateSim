@@ -13,10 +13,6 @@ int main(int argc, char** argv) {
 	char** content;
 	int** input;
 	int i;
-	for(i = 0; i < size; i++)
-	{
-		printf("%s",content[i]);
-	} 
 	if(argc == 2)
 	{
 		//if argc == 2 the second argument is an input file
