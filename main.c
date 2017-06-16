@@ -10,8 +10,8 @@ int main(int argc, char** argv) {
 	char* file = "testinput.txt";
 	int size;
 	int size2;
-	char** content;
-	int** input;
+	char* content[100];
+	int* input[100];
 	int i;
 	readFile(file,&size,&size2,content, input);
 	for(i = 0; i < size; i++)
