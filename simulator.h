@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 /* Enum used to define gate type */
-typedef enum {OR, AND, XOR, NOT, END, INPUT_ON, INPUT_OFF} gate_type;
+typedef enum {OR, AND, XOR, NOT, END, INPUT_ON, INPUT_OFF, ERROR} gate_type;
 
 /* Simulator will be stored in a binary tree */
 typedef struct GateTag{
@@ -29,7 +29,7 @@ int count_tree(Gate *gate_node);
 int create_gates(int arraySize, char*** content, Gate* given_root);
 void recursive_tree_build(int arraySize, char*** content, Gate* given_gate);
 gate_type get_gate_type(char* gateString);
-int add_input_to_tree(int* input, Gate* gate_node);
+int add_input_to_tree(int* input, int size_of_array, Gate* gate_node);
 void remove_inputs_from_tree(Gate* gate_node);
 void TEST_ARRAY(int arraySize, char*** constant);
 

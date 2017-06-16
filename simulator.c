@@ -15,30 +15,39 @@
 Gate *root;
 Gate gateStorageArray[1024];
 int gateStorageCounter = 0;
-int debug = 0;
+int debug = 1;
 
 /*
  * simulates tree from given node until inputs
  */
 int simulate_tree(Gate *gate_node){
+    int temp_left;
+    int temp_right;
+    if(debug){printf("%s\t", gate_node->name);}
     switch(gate_node->gate){
         case OR:
             if(debug){printf("OR\n");}
-            if(simulate_tree(gate_node->left) == 1 || simulate_tree(gate_node->right) == 1){
+            temp_left = simulate_tree(gate_node->left);
+            temp_right = simulate_tree(gate_node->right);
+            if(temp_left == 1 || temp_right == 1){
                 return 1;
             } else {
                 return 0;
             }
         case AND:
             if(debug){printf("AND\n");}
-            if(simulate_tree(gate_node->left) == 1 && simulate_tree(gate_node->right) == 1){
+            temp_left = simulate_tree(gate_node->left);
+            temp_right = simulate_tree(gate_node->right);
+            if(temp_left == 1 && temp_right == 1){
                 return 1;
             } else {
                 return 0;
             }
         case XOR:
             if(debug){printf("XOR\n");}
-            if(simulate_tree(gate_node->left) != simulate_tree(gate_node->right)){
+            temp_left = simulate_tree(gate_node->left);
+            temp_right = simulate_tree(gate_node->right);
+            if(temp_left != temp_right){
                 return 1;
             } else {
                 return 0;
@@ -52,6 +61,8 @@ int simulate_tree(Gate *gate_node){
         case INPUT_OFF:
             if(debug){printf("INPUT_OFF\n");}
             return 0;
+        case ERROR:
+            printf("ERROR: Enum type ERROR");
         default:
             printf("Invalid gate_type in simulate_tree(), returning 0\n");
             return 0;
@@ -194,7 +205,7 @@ void recursive_tree_build(int arraySize, char*** content, Gate* given_gate){
             recursive_tree_build(arraySize, content, (*given_gate).left);
             printf("\t\tReturned from previous level of recursive_tree_build\n");
 
-            if (tempGateLeft.gate == NOT){
+            if ((*given_gate).gate == NOT){
                 return;
             }
             branchesFilled++;
@@ -223,17 +234,17 @@ void recursive_tree_build(int arraySize, char*** content, Gate* given_gate){
 
 gate_type get_gate_type(char* gateString){
     printf("Gate string: %s ", gateString);
-    if(strcmp(gateString, "END")) {printf("Result: END"); return END;}
-    if(strcmp(gateString, "OR")) {printf("Result: OR"); return OR;}
-    if(strcmp(gateString, "XOR")) {return XOR;}
-    if(strcmp(gateString, "NOT")) {return NOT;}
-    if(strcmp(gateString, "AND")) {return AND;}
+    if(strcmp(gateString, "END") == 0) {printf("Result: END\n"); return END;}
+    if(strcmp(gateString, "OR") == 0) {printf("Result: OR\n"); return OR;}
+    if(strcmp(gateString, "XOR") == 0) {printf("Result: XOR\n"); return XOR;}
+    if(strcmp(gateString, "NOT") == 0) {printf("Result: NOT\n"); return NOT;}
+    if(strcmp(gateString, "AND") == 0) {printf("Result: AND\n");return AND;}
 
     printf("Could not find gate_type\n");
-    return END;
+    return ERROR;
 }
 
-int add_input_to_tree(int* input, Gate* gate_node){
+int add_input_to_tree(int* input, int size_of_array, Gate* gate_node){
     /*
      * Go down left, add next input bit
      * Go down right, add next input bit
@@ -249,14 +260,20 @@ int add_input_to_tree(int* input, Gate* gate_node){
     printf("temp in add_input_to_tree\n");
     //*/
 
+    printf("Start of array print\n");
+    for(int i = 0; i < size_of_array; i++){
+        printf("%i ", input[i]);
+    }
+    printf("End of array print\n");
+
     if(gate_node->left != NULL){
         printf("\t\tGate left of %s was not NULL\n", gate_node->name);
-        add_input_to_tree(input, gate_node->left);
+        add_input_to_tree(input, size_of_array, gate_node->left);
     } else {
         printf("\t\tGate left of %s was NULL\n", gate_node->name);
         // Add input[counter] as left input, where 0 is INPUT_OFF and 1 is INPUT_ON
         // If input is too short, the remaining values will be assumed 0
-        if(counter > (sizeof(input)/sizeof(int)) || input[counter] == 0){
+        if(counter < size_of_array && input[counter] == 0){
             Gate tempGateOff;
             tempGateOff.name = "input";
             tempGateOff.gate = INPUT_OFF;
@@ -282,10 +299,10 @@ int add_input_to_tree(int* input, Gate* gate_node){
     if(gate_node->gate != NOT){
        if(gate_node->right != NULL){
            printf("\t\tGate right of %s was not NULL\n", gate_node->name);
-           add_input_to_tree(input, gate_node->right);
+           add_input_to_tree(input, size_of_array, gate_node->right);
        } else {
            printf("\t\tGate right of %s was NULL\n", gate_node->name);
-           if(counter > (sizeof(input)/sizeof(int)) || input[counter] == 0){
+           if(counter < size_of_array && input[counter] == 0){
                Gate tempGateOff;
                tempGateOff.name = "input";
                tempGateOff.gate = INPUT_OFF;

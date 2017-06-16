@@ -56,7 +56,7 @@ int simulate(char* inputFile){
 
     //prints results from simulations
     for(int i = 0; i < *sizeInput; i++){
-        add_input_to_tree(input[i], root);
+        //add_input_to_tree(input[i], root);
         int result = simulate_tree(root);
         printf("%d\n", result);
         remove_inputs_from_tree(root);
@@ -132,9 +132,9 @@ void test_data(){
     //return;
 
     printf("Creating test input data array\n");
-    int test_data_inputs[2][6] = {
-            {1, 1, 1, 1, 0, 0},
-            {0, 0, 0, 1, 1, 1}
+    int test_data_inputs[2][5] = {
+            {0, 1, 1, 1, 0},
+            {0, 0, 0, 1, 1}
     };
 
 //    char* temp_string = test_root.name;
@@ -148,13 +148,13 @@ void test_data(){
         printf("Start of pass %i\n", i);
 
         printf("\tAdding inputs\n");
-        add_input_to_tree(test_data_inputs[i], &test_root);
+        add_input_to_tree(test_data_inputs[i], 5, &test_root);
 
-        /*
         printf("\tSimulating\n");
         int result = simulate_tree(&test_root);
         printf("\tResult of input %i: %d\n", i, result);
 
+        /*
         printf("\tRemoving inputs\n");
         remove_inputs_from_tree(&test_root);
 
