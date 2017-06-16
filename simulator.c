@@ -15,6 +15,7 @@
 Gate *root;
 Gate gateStorageArray[256];
 int gateStorageCounter = 0;
+int debug = 0;
 
 /*
  * simulates tree from given node until inputs
@@ -22,28 +23,34 @@ int gateStorageCounter = 0;
 int simulate_tree(Gate *gate_node){
     switch(gate_node->gate){
         case OR:
+            if(debug){printf("OR\n");}
             if(simulate_tree(gate_node->left) == 1 || simulate_tree(gate_node->right) == 1){
                 return 1;
             } else {
                 return 0;
             }
         case AND:
+            if(debug){printf("AND\n");}
             if(simulate_tree(gate_node->left) == 1 && simulate_tree(gate_node->right) == 1){
                 return 1;
             } else {
                 return 0;
             }
         case XOR:
+            if(debug){printf("XOR\n");}
             if(simulate_tree(gate_node->left) != simulate_tree(gate_node->right)){
                 return 1;
             } else {
                 return 0;
             }
         case NOT:
+            if(debug){printf("NOT\n");}
             return !simulate_tree(gate_node->left);
         case INPUT_ON:
+            if(debug){printf("INPUT_ON\n");}
             return 1;
         case INPUT_OFF:
+            if(debug){printf("INPUT_OFF\n");}
             return 0;
         default:
             printf("Invalid gate_type in simulate_tree(), returning 0\n");
@@ -127,20 +134,19 @@ Gate create_gates(int arraySize, char*** content){
     printf("\tNow in simulator.c create_gates\n");
 
     for(int i = 0; i < arraySize; i++){
-        printf("%s", content[i]); printf("\n");
+        printf("%s", content[i][0]); printf("\n");
         //printf(&content[14][0]); printf("\n");
-        if(strcmp(&content[i][2], "END") == 0){
-            printf("\tFound END gate\n");
+        if(strcmp(content[i][2], "END") == 0){
+            printf("\tFound END gate at position %i\n", i);
             Gate rootGate;
-            rootGate.name = &content[i][0];
-            rootGate.gate = get_gate_type(&content[i][1]);
-
+            rootGate.name = content[i][0];
+            rootGate.gate = get_gate_type(content[i][1]);
             gateStorageArray[gateStorageCounter] = rootGate;
             gateStorageCounter++;
-            *root = gateStorageArray[gateStorageCounter];
+            root = &gateStorageArray[gateStorageCounter];
 
             printf("\tStarting recursive_tree_build\n");
-            recursive_tree_build(arraySize, content, *root);
+            //recursive_tree_build(arraySize, content, *root);
 
             return *root;
         }
