@@ -2,11 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include "core.h"
-
+#include "IOfile.h"
 int main(int argc, char** argv) {
 	int isRunning = 1;
 	char readLine[100];
 	char* arguments[2];
+	char* file = "testinput.txt";
+	int size;
+	int size2;
+	char** content;
+	int** input;
+	int i;
+	readFile(file,&size,&size2,content, input);
+	for(i = 0; i < size; i++)
+	{
+		printf("%s",content[i]);
+	} 
 	if(argc == 2)
 	{
 		//if argc == 2 the second argument is an input file

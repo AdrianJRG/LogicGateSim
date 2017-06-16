@@ -5,9 +5,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <mem.h>
+//#include <mem.h>
 #include "simulator.h"
-
+#include <string.h>
 /*
  * Global vars
  */
