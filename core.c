@@ -87,7 +87,7 @@ void saveFile(char* outputFile){
  */
 
 void test_data(){
-    printf("Now in code.c test_data()\n");
+    printf("Now in core.c test_data()\n");
 
     printf("Test data array creation\n");
     char* test_data_array[][3] = { // This one does not work
@@ -124,35 +124,44 @@ void test_data(){
     char** combineRows[] = {r1, r2, r3, r4, r5};
 
     printf("Calling create_gates from simulator\n");
-    test_root = create_gates(5, combineRows);         //works
-    //*root = create_gates(5, allRows);             //works
-    //*root = create_gates(5, test_data_array);     //doesnt work??
-    root = &test_root;
+    create_gates(5, combineRows, &test_root);         //works when passed a &Gate, not a *Gate
+    //root = &test_root;
+    //create_gates(5, combineRows, root);
+
+    //temporary for debugging
+    //return;
 
     printf("Creating test input data array\n");
-    int test_data_inputs[2][5] = {
-            {1, 1, 1, 1, 0},
-            {0, 0, 0, 1, 1}
+    int test_data_inputs[2][6] = {
+            {1, 1, 1, 1, 0, 0},
+            {0, 0, 0, 1, 1, 1}
     };
 
-    printf("%s\n", (*root).name);
-    printf("%s\n", (*root).right->name);
+//    char* temp_string = test_root.name;
+//    if(temp_string == NULL || strcmp(temp_string, "") == 0){
+//        printf("Its empty\n");
+//    }
+//    printf("%s\n", temp_string);
+//    printf("After temp\n");
 
     for(int i = 0; i < 2; i++){
         printf("Start of pass %i\n", i);
 
-        printf("Adding inputs\n");
-        add_input_to_tree(test_data_inputs[i], root);
+        printf("\tAdding inputs\n");
+        add_input_to_tree(test_data_inputs[i], &test_root);
 
-        printf("Simulating\n");
-        int result = simulate_tree(root);
-        printf("%d\n", result);
+        /*
+        printf("\tSimulating\n");
+        int result = simulate_tree(&test_root);
+        printf("\tResult of input %i: %d\n", i, result);
 
-        printf("Removing inputs\n");
-        remove_inputs_from_tree(root);
+        printf("\tRemoving inputs\n");
+        remove_inputs_from_tree(&test_root);
+
+        //*/
 
         printf("End of pass %i\n", i);
     }
 
-    printf("End of test_data()");
+    printf("End of test_data()\n");
 }

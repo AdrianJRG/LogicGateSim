@@ -13,7 +13,7 @@
  */
 
 Gate *root;
-Gate gateStorageArray[256];
+Gate gateStorageArray[1024];
 int gateStorageCounter = 0;
 int debug = 0;
 
@@ -130,29 +130,34 @@ int count_tree(Gate *gate_node){
     }
 }
 
-Gate create_gates(int arraySize, char*** content){
+int create_gates(int arraySize, char*** content, Gate *given_root){
     printf("\tNow in simulator.c create_gates\n");
 
     for(int i = 0; i < arraySize; i++){
-        printf("%s", content[i][0]); printf("\n");
+        printf("%i\t%s\n", i, content[i][0]);
         //printf(&content[14][0]); printf("\n");
         if(strcmp(content[i][2], "END") == 0){
             printf("\tFound END gate at position %i\n", i);
             Gate rootGate;
+            rootGate.left = NULL;
+            rootGate.right = NULL;
             rootGate.name = content[i][0];
+            printf("Root Gate Name: %s\n", rootGate.name);
             rootGate.gate = get_gate_type(content[i][1]);
-            gateStorageArray[gateStorageCounter] = rootGate;
-            gateStorageCounter++;
-            root = &gateStorageArray[gateStorageCounter];
+//            gateStorageArray[gateStorageCounter] = rootGate;
+//            gateStorageCounter++;
+//            root = &gateStorageArray[gateStorageCounter];
 
+            *given_root = rootGate;
             printf("\tStarting recursive_tree_build\n");
-            //recursive_tree_build(arraySize, content, *root);
+            recursive_tree_build(arraySize, content, given_root);
+            printf("\tFinished recursive_tree_build\n");
 
-            return *root;
+            return 0;
         }
     }
     printf("\n\nError:\tDid not find END gate\n");
-    return *root;
+    return -1;
 }
 //
 //void TEST_ARRAY(int arraySize, char*** content){
@@ -161,7 +166,7 @@ Gate create_gates(int arraySize, char*** content){
 //    }
 //}
 
-void recursive_tree_build(int arraySize, char** content, Gate gate){
+void recursive_tree_build(int arraySize, char*** content, Gate* given_gate){
     int branchesFilled = 0;
     for(int i = 0; i < arraySize; i++){
         /*
@@ -172,34 +177,44 @@ void recursive_tree_build(int arraySize, char** content, Gate gate){
          *      Search for another and add to right
          *      Recursive search on right branch
          */
-        if(strcmp(gate.name, &content[i][2]) == 0 && branchesFilled == 0){
+        if(strcmp(given_gate->name, content[i][2]) == 0 && branchesFilled == 0){
             Gate tempGateLeft;
-            tempGateLeft.name = &content[i][0];
-            tempGateLeft.gate = get_gate_type(&content[i][1]);
+            printf("\t\tCreating left gate for: %s named: %s\n", content[i][2], content[i][0]);
+            tempGateLeft.name = content[i][0];
+            tempGateLeft.gate = get_gate_type(content[i][1]);
+            tempGateLeft.left = NULL;
+            tempGateLeft.right = NULL;
 
             gateStorageArray[gateStorageCounter] = tempGateLeft;
-            gate.left = &gateStorageArray[gateStorageCounter];
+            given_gate->left = &gateStorageArray[gateStorageCounter];
 
             gateStorageCounter++;
 
-            recursive_tree_build(arraySize, content, *gate.left);
+            printf("\t\tNext level of recursive_tree_build\n");
+            recursive_tree_build(arraySize, content, (*given_gate).left);
+            printf("\t\tReturned from previous level of recursive_tree_build\n");
 
-            if (tempGateLeft.gate != NOT){
+            if (tempGateLeft.gate == NOT){
                 return;
             }
             branchesFilled++;
 
-        } else if(strcmp(gate.name, &content[i][2]) == 0 && branchesFilled == 1){
+        } else if(strcmp(given_gate->name, content[i][2]) == 0 && branchesFilled == 1){
             Gate tempGateRight;
-            tempGateRight.name = &content[i][0];
-            tempGateRight.gate = get_gate_type(&content[i][1]);
+            printf("\t\tCreating right gate for: %s named: %s\n", content[i][2], content[i][0]);
+            tempGateRight.name = content[i][0];
+            tempGateRight.gate = get_gate_type(content[i][1]);
+            tempGateRight.left = NULL;
+            tempGateRight.right = NULL;
 
             gateStorageArray[gateStorageCounter] = tempGateRight;
-            gate.right = &gateStorageArray[gateStorageCounter];
+            given_gate->right = &gateStorageArray[gateStorageCounter];
 
             gateStorageCounter++;
 
-            recursive_tree_build(arraySize, content, *gate.right);
+            printf("\t\tNext level of recursive_tree_build\n");
+            recursive_tree_build(arraySize, content, (*given_gate).right);
+            printf("\t\tReturned from previous level of recursive_tree_build\n");
 
             return;
         }
@@ -207,12 +222,14 @@ void recursive_tree_build(int arraySize, char** content, Gate gate){
 }
 
 gate_type get_gate_type(char* gateString){
-    if(strcmp(gateString, "END")) return END;
-    if(strcmp(gateString, "OR")) return OR;
-    if(strcmp(gateString, "XOR")) return XOR;
-    if(strcmp(gateString, "NOT")) return NOT;
-    if(strcmp(gateString, "AND")) return AND;
+    printf("Gate string: %s ", gateString);
+    if(strcmp(gateString, "END")) {printf("Result: END"); return END;}
+    if(strcmp(gateString, "OR")) {printf("Result: OR"); return OR;}
+    if(strcmp(gateString, "XOR")) {return XOR;}
+    if(strcmp(gateString, "NOT")) {return NOT;}
+    if(strcmp(gateString, "AND")) {return AND;}
 
+    printf("Could not find gate_type\n");
     return END;
 }
 
@@ -223,22 +240,37 @@ int add_input_to_tree(int* input, Gate* gate_node){
      */
     static int counter = 0;
 
+    /*
+    char* temp_string = (*gate_node).name;
+    if(temp_string == NULL || strcmp(temp_string, "") == 0){
+        printf("Its empty\n");
+    }
+    printf("%s\n", temp_string);
+    printf("temp in add_input_to_tree\n");
+    //*/
+
     if(gate_node->left != NULL){
+        printf("\t\tGate left of %s was not NULL\n", gate_node->name);
         add_input_to_tree(input, gate_node->left);
     } else {
+        printf("\t\tGate left of %s was NULL\n", gate_node->name);
         // Add input[counter] as left input, where 0 is INPUT_OFF and 1 is INPUT_ON
         // If input is too short, the remaining values will be assumed 0
         if(counter > (sizeof(input)/sizeof(int)) || input[counter] == 0){
             Gate tempGateOff;
-            tempGateOff.name = "input" + counter;
+            tempGateOff.name = "input";
             tempGateOff.gate = INPUT_OFF;
+            tempGateOff.left = NULL;
+            tempGateOff.right = NULL;
             gateStorageArray[gateStorageCounter] = tempGateOff;
             gate_node->left = &gateStorageArray[gateStorageCounter];
             gateStorageCounter++;
         } else {
             Gate tempGateOn;
-            tempGateOn.name = "input" + counter;
+            tempGateOn.name = "input";
             tempGateOn.gate = INPUT_ON;
+            tempGateOn.left = NULL;
+            tempGateOn.right = NULL;
             gateStorageArray[gateStorageCounter] = tempGateOn;
             gate_node->left = &gateStorageArray[gateStorageCounter];
             gateStorageCounter++;
@@ -249,19 +281,25 @@ int add_input_to_tree(int* input, Gate* gate_node){
     //only check on right side if not a NOT gate
     if(gate_node->gate != NOT){
        if(gate_node->right != NULL){
+           printf("\t\tGate right of %s was not NULL\n", gate_node->name);
            add_input_to_tree(input, gate_node->right);
        } else {
+           printf("\t\tGate right of %s was NULL\n", gate_node->name);
            if(counter > (sizeof(input)/sizeof(int)) || input[counter] == 0){
                Gate tempGateOff;
-               tempGateOff.name = "input" + counter;
+               tempGateOff.name = "input";
                tempGateOff.gate = INPUT_OFF;
+               tempGateOff.left = NULL;
+               tempGateOff.right = NULL;
                gateStorageArray[gateStorageCounter] = tempGateOff;
                gate_node->right = &gateStorageArray[gateStorageCounter];
                gateStorageCounter++;
            } else {
                Gate tempGateOn;
-               tempGateOn.name = "input" + counter;
+               tempGateOn.name = "input";
                tempGateOn.gate = INPUT_ON;
+               tempGateOn.left = NULL;
+               tempGateOn.right = NULL;
                gateStorageArray[gateStorageCounter] = tempGateOn;
                gate_node->right = &gateStorageArray[gateStorageCounter];
                gateStorageCounter++;
@@ -274,12 +312,28 @@ int add_input_to_tree(int* input, Gate* gate_node){
 }
 
 void remove_inputs_from_tree(Gate* gate_node){
-    if(gate_node->gate == INPUT_ON || gate_node->gate == INPUT_OFF){
-        destroy_tree(gate_node);
+    if(gate_node->left->gate == INPUT_OFF ||
+            gate_node->left->gate == INPUT_ON){
+        gate_node->left = NULL;
     } else {
-        if(gate_node->left != NULL)
-            remove_inputs_from_tree(gate_node->left);
-        if(gate_node->right != NULL)
-            remove_inputs_from_tree(gate_node->right);
+        remove_inputs_from_tree(gate_node->left);
     }
+
+    if(gate_node->right->gate == INPUT_OFF ||
+       gate_node->right->gate == INPUT_ON){
+        gate_node->right = NULL;
+    } else {
+        remove_inputs_from_tree(gate_node->right);
+    }
+
+    // For now, memory will not be freed. May be implemented later on
+//
+//    if(gate_node->gate == INPUT_ON || gate_node->gate == INPUT_OFF){
+//        destroy_tree(gate_node);
+//    } else {
+//        if(gate_node->left != NULL)
+//            remove_inputs_from_tree(gate_node->left);
+//        if(gate_node->right != NULL)
+//            remove_inputs_from_tree(gate_node->right);
+//    }
 }
