@@ -21,8 +21,8 @@
 
 int sizeContent;
 int sizeInput;
-char** content[];
-int* input[];
+char** content[256];
+int* input[256];
 
 // root vars
 Gate root;
@@ -54,9 +54,15 @@ int i1[] = {0, 1, 1, 1, 0};
 int i2[] = {0, 0, 0, 1, 1};
 
 void insertTempData(){
-    content = {r1, r2, r3, r4, r5, r6};
-    input = {i1, i2};
+    content[0] = r1;
+    content[1] = r2;
+    content[2] = r3;
+    content[3] = r4;
+    content[4] = r5;
+    content[5] = r6;
 
+    input[0] = i1;
+    input[1] = i2;
 }
 
 /*
@@ -64,12 +70,14 @@ void insertTempData(){
  */
 
 int simulate(char* inputFile){
-    // Currently WIP
+    // IOFile.c is currently WIP
     readFile(inputFile, &sizeContent, &sizeInput, *content, input);
 
     //* Therefore currently data is overwritten
-
+    insertTempData();
     //*/
+
+
     return 0;
 }
 
