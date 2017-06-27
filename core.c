@@ -19,12 +19,13 @@
  * global vars
  */
 
-int* sizeContent;
-int* sizeInput;
-char** content;
-int** input;
+int sizeContent;
+int sizeInput;
+char** content[];
+int* input[];
 
-Gate *root;
+// root vars
+Gate root;
 Gate test_root;
 
 /*
@@ -42,9 +43,20 @@ void strSplit(char* strInput, char** strOutput)
 	}
 }
 
-void create_tree_from_file(char* inputFile){
-    readFile(inputFile, sizeContent, sizeInput, content, input);
-    //*root = create_gates(*sizeContent, content);
+// temporary data used for the testing of core
+char* r1[] = {"A", "AND", "B"};
+char* r2[] = {"C", "AND", "B"};
+char* r3[] = {"D", "NOT", "E"};
+char* r4[] = {"B", "OR", "E"};
+char* r5[] = {"E", "AND", "END"};
+char* r6[] = {"A", "AND", "D"};
+int i1[] = {0, 1, 1, 1, 0};
+int i2[] = {0, 0, 0, 1, 1};
+
+void insertTempData(){
+    content = {r1, r2, r3, r4, r5, r6};
+    input = {i1, i2};
+
 }
 
 /*
@@ -52,15 +64,12 @@ void create_tree_from_file(char* inputFile){
  */
 
 int simulate(char* inputFile){
-    create_tree_from_file(inputFile);
+    // Currently WIP
+    readFile(inputFile, &sizeContent, &sizeInput, *content, input);
 
-    //prints results from simulations
-    for(int i = 0; i < *sizeInput; i++){
-        //add_input_to_tree(input[i], root);
-        int result = simulate_tree(root);
-        printf("%d\n", result);
-        remove_inputs_from_tree(root);
-    }
+    //* Therefore currently data is overwritten
+
+    //*/
     return 0;
 }
 
@@ -83,7 +92,7 @@ void saveFile(char* outputFile){
 
 
 /*
- * temp funtions
+ * temp/test funtions
  */
 
 void test_data(){
@@ -114,17 +123,23 @@ void test_data(){
     char** allRows[] = {row1, row2, row3, row4, row5};
 
 
-    //This one also works
+    //This one also works and is the one that is used
     char* r1[] = {"A", "AND", "B"};
     char* r2[] = {"C", "AND", "B"};
     char* r3[] = {"D", "NOT", "E"};
     char* r4[] = {"B", "OR", "E"};
     char* r5[] = {"E", "AND", "END"};
+    char* r6[] = {"A", "AND", "D"};
 
     char** combineRows[] = {r1, r2, r3, r4, r5};
 
+    char** combineRowsMultipleOutputs[] = {r1, r2, r3, r4, r5, r6};
+
     printf("Calling create_gates from simulator\n");
     create_gates(5, combineRows, &test_root);         //works when passed a &Gate, not a *Gate
+
+    printf("Calling create_gates with MultiOutputTest!\n");
+    create_gates(6, combineRowsMultipleOutputs, &test_root);
     //root = &test_root;
     //create_gates(5, combineRows, root);
 
@@ -150,12 +165,13 @@ void test_data(){
         printf("\tAdding inputs\n");
         add_input_to_tree(test_data_inputs[i], 5, &test_root);
 
+        //*
         printf("\tSimulating\n");
         int result = simulate_tree(&test_root);
         printf("\tResult of input %i: %d\n", i, result);
 
-        /*
-        printf("\tRemoving inputs\n");
+        //*
+        printf("\n\tRemoving inputs\n");
         remove_inputs_from_tree(&test_root);
 
         //*/

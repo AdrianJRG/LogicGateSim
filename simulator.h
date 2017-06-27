@@ -32,5 +32,6 @@ gate_type get_gate_type(char* gateString);
 int add_input_to_tree(int* input, int size_of_array, Gate* gate_node);
 void remove_inputs_from_tree(Gate* gate_node);
 void TEST_ARRAY(int arraySize, char*** constant);
+void get_gate_if_exists(char* name_of_gate, int* index);
 
 #endif //LOGICGATESIM_SIMULATOR_H
