@@ -131,6 +131,9 @@ int simulate(char* inputFile){
             printf("simulation result: %i\n", result);
         }
     }
+
+    freeGates(&root);
+
     return 0;
 }
 
@@ -220,6 +223,8 @@ int simulateSave(char* inputFile, char* outputFile){
         free(bufferArray[bufferArrayCounter]);
     }
     free(bufferArray);
+
+    freeGates(&root);
 
     return 0;
 }

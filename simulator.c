@@ -411,3 +411,9 @@ void get_gate_if_exists(char* name_of_gate, int* index){
     }
     return;
 }
+
+void freeGates(Gate* given_gate){
+    memset(gateStorageArray, 0, sizeof(Gate)*1024);
+    gateStorageCounter = 0;
+    given_gate = NULL;
+}
