@@ -6,7 +6,7 @@
 int main(int argc, char** argv) {
 	int isRunning = 1;
 	char readLine[100];
-	char* arguments[2];
+	char* arguments[3];
 	char* file = "./testinput.txt";
 	int size;
 	int size2;
@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 	{
 		fgets(readLine, sizeof(readLine), stdin);
 		strtok(readLine, "\n");
-		strSplit(readLine,arguments);
+		strSplit(readLine, arguments, " ");
 		/*
 		options for cli
 		show [inputFile]
@@ -46,9 +46,9 @@ int main(int argc, char** argv) {
 		{
 			simulate(arguments[1]);
 		}
-		else if(strcmp(arguments[0], "save")==0)
+		else if(strcmp(arguments[0], "rs")==0)
 		{
-			saveFile(arguments[1]);
+			simulateSave(arguments[1], arguments[2]);
 		}
 		else if(strcmp(arguments[0], "quit")==0)
 		{

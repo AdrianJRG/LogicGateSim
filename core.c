@@ -19,10 +19,10 @@
  * global vars
  */
 
-int sizeContent;
-int sizeInput;
-char** content[256];
-int* input[256];
+int sizeContent = 0;
+int sizeInput = 0;
+char*** content = NULL;
+int** input = NULL;
 
 // root vars
 Gate root;
@@ -32,37 +32,52 @@ Gate test_root;
  * helper functions
  */
 
-void strSplit(char* strInput, char** strOutput)
+void strSplit(char* strInput, char** strOutput, char* splitToken)
 {
-	char* p = strtok(strInput, " ");
+	char* p = strtok(strInput, splitToken);
 	int i = 0;
 	while(p !=NULL)
 	{	
 		strOutput[i++] = p;
-		p = strtok(NULL, " ");
+		p = strtok(NULL, splitToken);
 	}
 }
 
-// temporary data used for the testing of core
-char* r1[] = {"A", "AND", "B"};
-char* r2[] = {"C", "AND", "B"};
-char* r3[] = {"D", "NOT", "E"};
-char* r4[] = {"B", "OR", "E"};
-char* r5[] = {"E", "AND", "END"};
-char* r6[] = {"A", "AND", "D"};
-int i1[] = {0, 1, 1, 1, 0};
-int i2[] = {0, 0, 0, 1, 1};
+void initializeArrays(){
+    content = (char***)realloc(content, 256*sizeof(char**));
+    input = (int**)realloc(input, 256*sizeof(int*));
+}
 
-void insertTempData(){
-    content[0] = r1;
-    content[1] = r2;
-    content[2] = r3;
-    content[3] = r4;
-    content[4] = r5;
-    content[5] = r6;
+int gateToString(char* buffer, char** gate){
+    strcpy(buffer, "");
+    strcat(buffer, gate[0]);
+    strcat(buffer, " ");
+    strcat(buffer, gate[1]);
+    strcat(buffer, " ");
+    strcat(buffer, gate[2]);
 
-    input[0] = i1;
-    input[1] = i2;
+    return 0;
+}
+
+int inputToString(char* buffer, int* inputS){
+    strcpy(buffer, "");
+    int i = 0;
+    char temp[8];
+    while(inputS[i] != -1){
+        sprintf(temp, "%i", inputS[i]);
+        strcat(buffer, temp);
+        i++;
+    }
+
+    return 0;
+}
+
+int getSizeOfInput(int* inputS){
+    int i = 0;
+    while (inputS[i] != 0){
+        i++;
+    }
+    return i;
 }
 
 /*
@@ -70,34 +85,148 @@ void insertTempData(){
  */
 
 int simulate(char* inputFile){
-    // IOFile.c is currently WIP
-    readFile(inputFile, &sizeContent, &sizeInput, *content, input);
 
-    //* Therefore currently data is overwritten
-    insertTempData();
+    // initialize content and input arrays
+    initializeArrays();
+
+    // read from file
+    readFromFile(inputFile, &sizeContent, &sizeInput, content, input);
+
+    // Debugging info
+    //*
+    for (int b = 0; b < 2; ++b) {
+        printf("content print from core: %s", content[b][0]);
+        printf(" %s", content[b][1]);
+        printf(" %s\n", content[b][2]);
+    }
+    for (int i = 0; i < 3; ++i) {
+        printf("input[%i] print from core: %i", i, input[i][0]);
+        int j = 1;
+        while(input[i][j] != -1) {
+            printf(" %i", input[i][j]);
+            j++;
+        }
+        printf("\n");
+    }
     //*/
 
+    // turn the strings into gates
+    int gatesGood = create_gates(sizeContent, content, &root);
 
+    if(gatesGood == -1){
+        printf("Aborting simulation\n");
+    } else {
+        // in inputs through gates
+        for (int k = 0; k < sizeInput; ++k) {
+            char inputString[128];
+            int result;
+
+            inputToString(inputString, input[k]);
+            printf("input %i (%s), ", k, inputString);
+
+            add_input_to_tree(input[k], getSizeOfInput(input[k]), &root);
+            result = simulate_tree(&root);
+            remove_inputs_from_tree(&root);
+
+            printf("simulation result: %i\n", result);
+        }
+    }
     return 0;
 }
 
 int simulateSave(char* inputFile, char* outputFile){
-    simulate(inputFile);
+    // initialize content and input arrays
+    initializeArrays();
 
-    printf("simulateSave not implemented");
+    // read from file
+    readFromFile(inputFile, &sizeContent, &sizeInput, content, input);
 
-    return 999;
+    // Debugging info
+    /*
+    for (int b = 0; b < 2; ++b) {
+        printf("content print from core: %s", content[b][0]);
+        printf(" %s", content[b][1]);
+        printf(" %s\n", content[b][2]);
+    }
+    for (int i = 0; i < 3; ++i) {
+        printf("input[%i] print from core: %i", i, input[i][0]);
+        int j = 1;
+        while(input[i][j] != -1) {
+            printf(" %i", input[i][j]);
+            j++;
+        }
+        printf("\n");
+    }
+    //*/
 
+    int linesForFormatting = 10;
+    int linesNeeded = sizeContent + sizeInput + linesForFormatting;
+    int bufferArrayCounter = 0;
+    char** bufferArray = (char**)malloc(sizeof(char*)*linesNeeded);
+    char* lineBuffer;
+
+    lineBuffer = (char*)malloc(sizeof(char)*80);
+    sprintf(lineBuffer, "Simulation output of %i gates and %i inputs", sizeContent, sizeInput);
+    bufferArray[bufferArrayCounter++] = lineBuffer;
+
+    lineBuffer = (char*)malloc(sizeof(char)*80);
+    sprintf(lineBuffer, "Gates used:");
+    bufferArray[bufferArrayCounter++] = lineBuffer;
+
+    for (int i = 0; i < sizeContent; ++i) {
+        char temp[30];
+        gateToString(temp, content[i]);
+
+        lineBuffer = (char*)malloc(sizeof(char)*80);
+        sprintf(lineBuffer, "\t%s", temp);
+        bufferArray[bufferArrayCounter++] = lineBuffer;
+    }
+
+    // turn the strings into gates
+    int gatesGood = create_gates(sizeContent, content, &root);
+
+    if(gatesGood == -1){
+        lineBuffer = (char*)malloc(sizeof(char)*80);
+        sprintf(lineBuffer, "\nError:\tDid not find END gate. Aborting simulation");
+        bufferArray[bufferArrayCounter++] = lineBuffer;
+    } else {
+        lineBuffer = (char*)malloc(sizeof(char)*80);
+        sprintf(lineBuffer, "Simulation results:");
+        bufferArray[bufferArrayCounter++] = lineBuffer;
+        // in inputs through gates
+        for (int k = 0; k < sizeInput; ++k) {
+            char inputString[128];
+            int result;
+
+            inputToString(inputString, input[k]);
+            printf("input %i (%s), ", k, inputString);
+
+            add_input_to_tree(input[k], getSizeOfInput(input[k]), &root);
+            result = simulate_tree(&root);
+            remove_inputs_from_tree(&root);
+
+            printf("simulation result: %i\n", result);
+
+            lineBuffer = (char*)malloc(sizeof(char)*80);
+            sprintf(lineBuffer, "\tinput %i (%s), simulation result: %i", k, inputString, result);
+            bufferArray[bufferArrayCounter++] = lineBuffer;
+        }
+    }
+    // write everything to file
+    writeToFile(outputFile, bufferArrayCounter, bufferArray);
+
+    // clean up
+    for (int j = 0; j < bufferArrayCounter; ++j) {
+        free(bufferArray[bufferArrayCounter]);
+    }
+    free(bufferArray);
+
+    return 0;
 }
 
 void showTree(char* inputFile){
     printf("showTree not implemented");
 }
-
-void saveFile(char* outputFile){
-    printf("saveTree not implemented");
-}
-
 
 /*
  * temp/test funtions

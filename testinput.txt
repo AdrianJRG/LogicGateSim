@@ -1,5 +1,4 @@
 A AND B
 B XOR C
-
 INPUT
-10
+101110
