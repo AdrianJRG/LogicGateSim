@@ -125,6 +125,7 @@ int resetArrays(int* arraySizeContent,int* arraySizeInput, char*** content, int*
 	return 0;
 }
 
+// takes a string and splits it into a component, then adds the component to content***
 int lineToContentArray(char* line, int* arraySizeContent, char*** content){
 	// expected line format: "A AND B"
     strtok(line, "\n"); //remove trailing newline if it exists
