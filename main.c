@@ -3,6 +3,7 @@
 #include <string.h>
 #include "core.h"
 #include "IOfile.h"
+
 int main(int argc, char** argv) {
 	int isRunning = 1;
 	char readLine[100];
