@@ -236,6 +236,8 @@ void showTree(char* inputFile){
 
 /*
  * temp/test funtions
+ * 
+ * used to test the functions within simulator.c
  */
 
 void test_data(){
