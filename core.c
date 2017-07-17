@@ -74,7 +74,7 @@ int inputToString(char* buffer, int* inputS){
 
 int getSizeOfInput(int* inputS){
     int i = 0;
-    while (inputS[i] != 0){
+    while (inputS[i] != -1){
         i++;
     }
     return i;
@@ -93,7 +93,7 @@ int simulate(char* inputFile){
     readFromFile(inputFile, &sizeContent, &sizeInput, content, input);
 
     // Debugging info
-    //*
+    /*
     for (int b = 0; b < 2; ++b) {
         printf("content print from core: %s", content[b][0]);
         printf(" %s", content[b][1]);
