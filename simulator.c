@@ -8,6 +8,7 @@
 //#include <mem.h>
 #include "simulator.h"
 #include <string.h>
+
 /*
  * Global vars
  */
