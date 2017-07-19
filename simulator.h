@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-/* Enum used to define gate type */
+/* Enum used to define gate type and input */
 typedef enum {OR, AND, XOR, NOT, END, INPUT_ON, INPUT_OFF, ERROR} gate_type;
 
 /* Simulator will be stored in a binary tree */
