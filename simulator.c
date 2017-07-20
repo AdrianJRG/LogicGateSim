@@ -2,7 +2,6 @@
 // Created by ajrgu on 22-May-17.
 //
 
-
 #include <stdio.h>
 #include <stdlib.h>
 //#include <mem.h>
@@ -176,12 +175,6 @@ int create_gates(int arraySize, char*** content, Gate *given_root){
     printf("\n\nError:\tDid not find END gate\n");
     return -1;
 }
-//
-//void TEST_ARRAY(int arraySize, char*** content){
-//    for(int i = 0; i < arraySize; i++){
-//        printf(content[i]); printf("\n");
-//    }
-//}
 
 void recursive_tree_build(int arraySize, char*** content, Gate* given_gate){
     int branchesFilled = 0;
