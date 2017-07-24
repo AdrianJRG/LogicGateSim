@@ -21,3 +21,6 @@ Logic gate simulator for c project.
 - Check for unsused gates
 - Add relevant error messages for user to help clear up mistakes
 - Remove debugging text!!
+- Change folder structure
+- Set up CMakeLists.txt
+- Set up unit testing
