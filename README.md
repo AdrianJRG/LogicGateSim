@@ -24,3 +24,4 @@ Logic gate simulator for c project.
 - Change folder structure
 - Set up CMakeLists.txt
 - Set up unit testing
+- Set up ci environment?
