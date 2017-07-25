@@ -11,4 +11,3 @@ Simulation results:
 	input 1 (00011), simulation result: 1
 	input 2 (11111), simulation result: 1
 
-
