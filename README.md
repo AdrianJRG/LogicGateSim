@@ -1,5 +1,5 @@
 # LogicGateSim
-Logic gate simulator for c project.
+Logic gate simulator for c project.  
 
 # Usage
 ## Commands over cli
