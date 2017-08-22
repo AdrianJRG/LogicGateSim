@@ -6,16 +6,20 @@
  * Unit tests for simulator.c
  */
 
-#include "../src/unity.h"
-#include "IOfile.h"
+#include <stdlib.h>
+#include <unity.h>
+#include <IOfile.h>
+#include <string.h>
 
 void test_lineToContentArray(void){
-    char*** content = (char***)malloc(content, 2 * sizeof(char**));
+    char*** content = (char***)realloc(content, 2 * sizeof(char**));
     int arraySizeContent = 0;
 
+	char* line = (char*)malloc(20*sizeof(char));
     char* lineToBeSplit = "A NOT B";
-
-    lineToContentArray(lineToBeSplit, arraySizeContent, content);
+	stpcpy(line, lineToBeSplit);
+	
+    lineToContentArray(line, &arraySizeContent, content);
 
     TEST_ASSERT_EQUAL_STRING("A", content[0][0]);
     TEST_ASSERT_EQUAL_STRING("NOT", content[0][1]);
@@ -30,7 +34,7 @@ void test_lineToContentArray(void){
 int main(void){
     UNITY_BEGIN();
 
-    RUN_TEST(test_lineToContentArray());
+    RUN_TEST(test_lineToContentArray);
 
     return UNITY_END();
 }
