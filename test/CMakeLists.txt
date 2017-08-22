@@ -1,1 +1,3 @@
-add_subdirectory(suite_1)
+add_subdirectory(IOfile)
+add_subdirectory(core)
+add_subdirectory(simulator)

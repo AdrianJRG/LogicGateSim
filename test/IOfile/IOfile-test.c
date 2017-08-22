@@ -7,12 +7,25 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <unity.h>
 #include <IOfile.h>
 #include <string.h>
 
+void strSplit(char* strInput, char** strOutput, char* splitToken)
+{
+    char* p = strtok(strInput, splitToken);
+    int i = 0;
+    while(p !=NULL)
+    {
+        strOutput[i++] = p;
+        p = strtok(NULL, splitToken);
+    }
+}
+
 void test_lineToContentArray(void){
-    char*** content = (char***)realloc(content, 2 * sizeof(char**));
+    printf("Start of test");
+    char*** content = (char***)malloc(2 * sizeof(char**));
     int arraySizeContent = 0;
 
 	char* line = (char*)malloc(20*sizeof(char));
@@ -21,14 +34,19 @@ void test_lineToContentArray(void){
 	
     lineToContentArray(line, &arraySizeContent, content);
 
+    printf("Begin asserts");
     TEST_ASSERT_EQUAL_STRING("A", content[0][0]);
     TEST_ASSERT_EQUAL_STRING("NOT", content[0][1]);
     TEST_ASSERT_EQUAL_STRING("B", content[0][2]);
+    printf("End asserts");
+
+    free(line);
 
     free(content[0]);
 
     free(content);
 
+    printf("End of test");
 }
 
 int main(void){
