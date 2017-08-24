@@ -1,0 +1,8 @@
+//
+// Created by Adrian Guillot on 24-Aug-17.
+//
+
+#ifndef LOGICGATESIM_IOFILE_LIB_TEST_H
+#define LOGICGATESIM_IOFILE_LIB_TEST_H
+
+#endif //LOGICGATESIM_IOFILE_LIB_TEST_H
