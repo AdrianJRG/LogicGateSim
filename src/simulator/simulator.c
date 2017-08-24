@@ -2,7 +2,7 @@
 // Created by ajrgu on 23-Aug-17.
 //
 
-#include <mem.h>
+#include <memory.h>
 #include <stdio.h>
 #include "simulator.h"
 
