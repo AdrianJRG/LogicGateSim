@@ -8,6 +8,6 @@
 #include "../logicgatelib/logicgatelib.h"
 
 // function prototypes
-int simulate_tree(MultiGate* endGate, Input* input, Output* output);
+int simulate_tree(MultiGate* endGate, Output* output);
 
 #endif //LOGICGATESIM_SIMULATOR_H

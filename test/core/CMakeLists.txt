@@ -3,7 +3,7 @@ add_executable(core_app
 )
 
 target_link_libraries(core_app
-    IOfile
+    iofile
     core
     simulator
     Unity

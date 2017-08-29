@@ -7,7 +7,7 @@
 #include <unity.h>
 
 void test_showTree(void){
-    TEST_ASSERT_EQUAL_STRING("showTree not implemented", "showTree not implemented");
+    TEST_IGNORE();
 }
 
 int main(void){

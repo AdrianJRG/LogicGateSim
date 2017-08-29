@@ -1,35 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "core.h"
-#include "IOfile.h"
+#include "core/core.h"
+#include "logicgatelib/logicgatelib.h"
 
 int main(int argc, char** argv) {
 	int isRunning = 1;
 	char readLine[100];
 	char* arguments[3];
 	char* file = "./testinput.txt";
-	int size;
-	int size2;
-	char** content;
-	int** input;
-	int i;
 	if(argc == 2)
 	{
 		//if argc == 2 the second argument is an input file
-		simulate(argv[1]);
+		//simulate(argv[1]);
 		
 	}
 	 else if(argc == 3)
 	{	
 		//if argc == 3 the second argument is input, third output file
-		simulateSave(argv[1], argv[2]);
+		//simulateSave(argv[1], argv[2]);
 	}
 	while(isRunning)
 	{
 		fgets(readLine, sizeof(readLine), stdin);
 		strtok(readLine, "\n");
-		strSplit(readLine, arguments, " ");
+        int sizeofsplit;
+		strSplit(readLine, arguments, &sizeofsplit, " ");
 		/*
 		options for cli
 		show [inputFile]
@@ -41,25 +37,16 @@ int main(int argc, char** argv) {
 		*/
 		if(strcmp(arguments[0], "show")==0)
 		{
-			showTree(arguments[1]);
+			//showTree(arguments[1]);
 		}
 		else if(strcmp(arguments[0], "run")==0)
 		{
-			simulate(arguments[1]);
-		}
-		else if(strcmp(arguments[0], "rs")==0)
-		{
-			simulateSave(arguments[1], arguments[2]);
+			if(loadFromFile(arguments[1]) != 0){printf("Error occurred\n"); return -1;}
+			simulate();
 		}
 		else if(strcmp(arguments[0], "quit")==0)
 		{
 			isRunning = 0;
-		}
-		else if(strcmp(arguments[0], "test")==0)
-		{
-			printf("Starting test_data()\n");
-			test_data();
-			printf("Finished test_data()\n");
 		}
 		else
 		{
