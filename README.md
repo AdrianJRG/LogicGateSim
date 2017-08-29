@@ -16,12 +16,7 @@ Logic gate simulator for c project.
    Exits the program.
 
 # Things remaining to be done
-- Change method of adding inputs so that they are ordered
-- Verify data integrity (before processing)
 - Check for unsused gates
 - Add relevant error messages for user to help clear up mistakes
-- Remove debugging text!!
-- Change folder structure
-- Set up CMakeLists.txt
 - Set up unit testing
-- Set up ci environment?
+
