@@ -1,0 +1,21 @@
+GATES
+gate1 NOT
+gate2 END
+gate3 AND
+
+CONNECTIONS
+gate1 $1
+gate2 gate1 gate3 $3
+gate3 $1 $2
+
+#Some comments, these can be placed anywhere
+
+INPUTS
+000
+001
+010
+011
+100
+101
+110
+111

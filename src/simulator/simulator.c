@@ -44,6 +44,7 @@ int simulate_tree(MultiGate* endGate, Output* output){
             return endGate->value;
 
         case END:
+            output->size = 0;
             for (int j = 0; j < endGate->inputGatesCount; ++j) {
                 (output->size)++;
                 output->value[j] = simulate_tree(endGate->inputGates[j], output);

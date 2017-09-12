@@ -9,10 +9,10 @@
 #include <stdio.h>
 #include <memory.h>
 
-MultiGate* endGate = NULL;
-Input** inputs = NULL;
+MultiGate endGate;
+Input** inputs = NULL; // should be Input* but too much depends on it right now to fix
 int inputCount = 0;
-Output** outputs = NULL;
+Output* outputs = NULL;
 
 // helper functions
 static int initializeVariables(void){
@@ -25,21 +25,26 @@ static int initializeVariables(void){
     }
 
     if(outputs == NULL){
-        outputs = malloc(MAX_NUMBER_OF_INPUTS * sizeof(Output*));
+        outputs = malloc(MAX_NUMBER_OF_INPUTS * sizeof(Output));
     } else {
-        outputs = realloc(outputs, MAX_NUMBER_OF_INPUTS * sizeof(Output*));
+        outputs = realloc(outputs, MAX_NUMBER_OF_INPUTS * sizeof(Output));
     }
+
+    inputCount = 0;
 
     return errors;
 }
 
-
+/*
+ * Used to get an array of external inputs so that their value can more easily adjusted between runs.
+ * Tested and working!
+ */
 static int findInputLocations(MultiGate* gate, MultiGate** inputLocations){
     if(gate->type == INPUT){
         int inputNumber;
         char buffer[80];
 
-        strcpy(buffer, gate->name + 1); // skip first character which is '$'
+        strcpy(buffer, &(gate->name[1])); // skip first character which is '$'
         sscanf(buffer, "%d", &inputNumber);
 
         inputLocations[inputNumber] = gate;
@@ -65,7 +70,7 @@ int loadFromFile(char* fileName){
     int errors = 0;
 
     errors += initializeVariables();
-    errors += readFile(fileName, endGate, inputs, &inputCount);
+    errors += readFile(fileName, &endGate, inputs, &inputCount);
 
     return errors;
 }
@@ -79,21 +84,20 @@ int saveToFile(char* fileName){
 int simulate(void){
     int errors = 0;
 
-    printf("testfp\n");
-
-
     MultiGate* inputLocations[MAX_NUMBER_OF_INPUTS];
     // first we find where the input locations are and store these in the above array
-    findInputLocations(endGate, inputLocations);
+    findInputLocations(&endGate, inputLocations);
 
-    for (int i = 0; i < inputCount; ++i) {
-        for (int j = 0; j < inputs[i]->size; ++j) {
-            inputLocations[j]->value = inputs[i]->value[j];
-            // TODO: This might cause issues if inputLocations is not big enough. Make a check for that
+    printf("Starting simulation ...\n");
+    printf("Outputs from simulation:\n");
+    for (int i = 0; i < inputCount; ++i) {// for every input
+        for (int j = 0; j < inputs[i][0].size; ++j) {// we set the external inputs
+            inputLocations[j+1]->value = inputs[i][0].value[j]; //TODO: fix "j+1", caused by starting external var at 1.
         }
-        simulate_tree(endGate, outputs[i]);
-        printf("Output %d: ", i);
-        outputToStdOut(outputs[i]);
+        simulate_tree(&endGate, &outputs[i]);
+
+        printf("Output[%d]: ", i);
+        outputToStdOut(&outputs[i]);
         printf("\n");
     }
 
