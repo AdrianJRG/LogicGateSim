@@ -511,11 +511,26 @@ int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount)
 
 /*
  * Write output to file.
- * TODO: implement this.
+ * TODO: Test extensively
+ * will do
  */
 int writeFile(char* fileName, MultiGate* endGate, Output* output){
 
-    printf("writeFile is not currently implemented\n");
+    FILE *f = fopen(fileName, "w");
+    if (f == NULL)
+    {
+        printf("Error opening file!\n");
+    }
+
+
+    fprintf(f, "Gates :\nName\tType\tInputGates\n");
+    for(int i = 0; i < endGate->inputGatesCount; i++) {
+        fprintf(f, "%s\t%d\t%d\n", endGate->name[i], endGate[i].type, endGate[i]);
+    }
+    fprintf(f, "OUTPUT:\n");
+    for (int i = 0; i < output->size; ++i) { //for each output write
+        fprintf(f,"%d ", output->value[i]);
+    }
 
     return 0;
 }
