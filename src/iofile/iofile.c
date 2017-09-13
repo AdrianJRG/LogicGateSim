@@ -525,7 +525,7 @@ int writeFile(char* fileName, MultiGate* endGate, Output* output){
 
     fprintf(f, "Gates :\nName\tType\tInputGates\n");
     for(int i = 0; i < endGate->inputGatesCount; i++) {
-        fprintf(f, "%s\t%d\t%d\n", endGate->name[i], endGate[i].type, endGate[i]);
+        fprintf(f, "%s\t%d\t%d\n", endGate->name, endGate[i].type, endGate[i]);
     }
     fprintf(f, "OUTPUT:\n");
     for (int i = 0; i < output->size; ++i) { //for each output write
