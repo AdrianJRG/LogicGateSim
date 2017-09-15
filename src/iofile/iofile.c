@@ -509,6 +509,19 @@ int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount)
     return 0;
 }
 
+
+void printGates(FILE *f, MultiGate* gate)
+{
+    if(gate->type == INPUT) {
+        return;
+    } else {
+        for (int i = 0; i < gate->inputGatesCount; i++) {
+            fprintf(f, "%s\t%d\t%d\n", gate->name, gate->type, gate->inputGatesCount);
+            printGates(f, gate->inputGates[i]);
+        }
+    }
+}
+
 /*
  * Write output to file.
  * TODO: Test extensively
@@ -525,7 +538,7 @@ int writeFile(char* fileName, MultiGate* endGate, Output* output){
 
     fprintf(f, "Gates :\nName\tType\tInputGates\n");
     for(int i = 0; i < endGate->inputGatesCount; i++) {
-        fprintf(f, "%s\t%d\t%d\n", endGate->name, endGate[i].type, endGate[i]);
+        printGates(f, endGate);
     }
     fprintf(f, "OUTPUT:\n");
     for (int i = 0; i < output->size; ++i) { //for each output write
