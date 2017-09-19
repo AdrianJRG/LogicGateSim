@@ -7,8 +7,9 @@
 #ifndef LOGICGATESIM_IOFILE_H
 #define LOGICGATESIM_IOFILE_H
 
-int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount);
-int writeFile(char* fileName, MultiGate* endGate, Output* output);
+int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount, int verbose);
+int writeFile(char* fileName, MultiGate* endGate, Input** input, int inputCount, Output* output);
+int cleanUpGatesInHeap(void);
 
 typedef enum {NONE, GATES, CONNECTIONS, INPUTS} INPUT_SECTIONS;
 

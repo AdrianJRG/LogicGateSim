@@ -66,11 +66,12 @@ static int outputToStdOut(Output* output){
 }
 
 // actual useful stuff
-int loadFromFile(char* fileName){
+int loadFromFile(char* fileName, int verbose){
     int errors = 0;
 
     errors += initializeVariables();
-    errors += readFile(fileName, &endGate, inputs, &inputCount);
+    errors += cleanUpGatesInHeap();
+    errors += readFile(fileName, &endGate, inputs, &inputCount, verbose);
 
     return errors;
 }
@@ -78,7 +79,18 @@ int loadFromFile(char* fileName){
 int saveToFile(char* fileName){
     int errors = 0;
 
+    errors += writeFile(fileName, &endGate, inputs, inputCount, outputs);
+
     return errors;
+}
+
+int cleanHeap(void){
+    for (int i = 0; i < inputCount; ++i) {
+        free(inputs[inputCount]);
+    }
+    inputCount = 0;
+
+    return cleanUpGatesInHeap();
 }
 
 int simulate(void){

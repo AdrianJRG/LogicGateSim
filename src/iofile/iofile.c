@@ -15,7 +15,6 @@ int currentLine = 0;
 INPUT_SECTIONS currentSection = NONE;
 unsigned int gatesCacheCount = 0;
 MultiGate* gatesCache[CACHE_SIZE];
-//uint8_t arrayGatesUses[CACHE_SIZE];
 
 // helper functions
 
@@ -28,7 +27,6 @@ static void resetGlobals(void){
     currentSection = NONE;
     gatesCacheCount = 0;
     memset(gatesCache, 0, CACHE_SIZE * sizeof(MultiGate*));
-    //memset(arrayGatesUses, 0, CACHE_SIZE * sizeof(uint8_t));
 }
 
 /*
@@ -39,7 +37,10 @@ static int getNextLine(FILE* fp, char* buffer){
     int errors = 0;
 
     currentLine++;
-    if(fgets(buffer, BUFFER_SIZE, fp) == NULL) {printf("Error reading file at line %d\n", currentLine); errors++;}
+    if(fgets(buffer, BUFFER_SIZE, fp) == NULL && !feof(fp)) {
+        printf("Error reading file at line %d\n", currentLine);
+        errors++;
+    }
 
     // strip newline
     buffer[strcspn(buffer, "\r\n")] = 0;
@@ -51,9 +52,10 @@ static int getNextLine(FILE* fp, char* buffer){
  * Check if line starts with '#'
  * NOT tested.
  */
-static int isLineComment(char* line){
+static int isLineComment(char* line, int verbose){
     if(line[0] == '#'){
-        printf("Comment detected on line %d, skipping.\n", currentLine);
+        if(verbose > 0)
+            printf("Comment detected on line %d, skipping.\n", currentLine);
         return 1;
     }
     return 0;
@@ -63,9 +65,10 @@ static int isLineComment(char* line){
  * Checks if line is empty
  * NOT tested.
  */
-int isLineEmpty(char* line){
+int isLineEmpty(char* line, int verbose){
     if(line[0] == '\0') {
-        printf("Empty line detected on line %d, skipping.\n", currentLine);
+        if(verbose > 0)
+            printf("Empty line detected on line %d, skipping.\n", currentLine);
         return 1;
     }
     return 0;
@@ -114,20 +117,23 @@ static MultiGate* getGate(char* name){
  * NOT tested.
  * TODO: Test this when reading from file (Line endings may be wrong)
  */
-int updateSection(char* line){
+int updateSection(char* line, int verbose){
     if(strcmp(line, "GATES") == 0) {
         currentSection = GATES;
-        printf("Start of GATES, line %d.\n", currentLine);
+        if(verbose > 0)
+            printf("Start of GATES, line %d.\n", currentLine);
         return 1;
     }
     if(strcmp(line, "CONNECTIONS") == 0) {
         currentSection = CONNECTIONS;
-        printf("Start of CONNECTIONS, line %d.\n", currentLine);
+        if(verbose > 0)
+            printf("Start of CONNECTIONS, line %d.\n", currentLine);
         return 1;
     }
     if(strcmp(line, "INPUTS") == 0) {
         currentSection = INPUTS;
-        printf("Start of INPUTS, line %d.\n", currentLine);
+        if(verbose > 0)
+            printf("Start of INPUTS, line %d.\n", currentLine);
         return 1;
     }
 
@@ -184,14 +190,12 @@ int lineToGate(char* line, MultiGate* gate){
  */
 int lineToConnection(char* line){
     unsigned int errors = 0;
-    printf("line: \"%s\" ", line);
 
     int size = 0;   // number of inputs on the line + name of gate
     char** buffer = (char**)malloc(80 * sizeof(char**)) ;
     strSplit(line, buffer, &size, " ");
 
     int numberOfInputs = size - 1;
-    printf("inputs %d\t\n", numberOfInputs);
 
     // check that the first gate exists
     MultiGate* baseGate = getGate(buffer[0]);
@@ -427,7 +431,7 @@ int validateInput(char* line){
  * Read from file, creating the needed gates, connections and inputs.
  * PARTIALLY tested.
  */
-int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount){
+int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount, int verbose){
     resetGlobals();
 
     // open up the file
@@ -451,7 +455,7 @@ int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount)
     while(!feof(fp)) {
         //printf("l:%3d \t%s\t\n", currentLine, buffer);
         // if line is comment, empty or section header, skip to next line
-        if (!isLineComment(buffer) && !isLineEmpty(buffer) && !updateSection(buffer)) {
+        if (!isLineComment(buffer, verbose) && !isLineEmpty(buffer, verbose) && !updateSection(buffer, verbose)) {
             switch (currentSection) {
                 case NONE:
                     break;
@@ -484,7 +488,7 @@ int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount)
     for (int i = 0; i < gatesCacheCount; ++i) {
         if(gatesCache[i]->type == END){
             *endGate = gatesCache[i][0];
-            printf("Found end gate at position %d\n", i);
+            //printf("Found end gate at position %d\n", i);
         }
     }
 
@@ -510,15 +514,26 @@ int readFile(char* fileName, MultiGate* endGate, Input** input, int* inputCount)
 }
 
 
-void printGates(FILE *f, MultiGate* gate)
+void printGatesToFile(FILE *f, MultiGate *gate)
 {
     if(gate->type == INPUT) {
         return;
     } else {
-        for (int i = 0; i < gate->inputGatesCount; i++) {
-            fprintf(f, "%s\t%d\t%d\n", gate->name, gate->type, gate->inputGatesCount);
-            printGates(f, gate->inputGates[i]);
+        if(gate->value == 0){
+            fprintf(f, "%s\t%d\t\t%d {", gate->name, gate->type, gate->inputGatesCount);
+            gate->value = 1;
         }
+        for (int j = 0; j < gate->inputGatesCount; ++j) {
+            fprintf(f, "%s", gate->inputGates[j]->name);
+            if((j + 1) < gate->inputGatesCount){
+                fprintf(f, ", ");
+            }
+        }
+        fprintf(f, "}\n");
+        for (int i = 0; i < gate->inputGatesCount; i++) {
+            printGatesToFile(f, gate->inputGates[i]);
+        }
+        gate->value = 0;
     }
 }
 
@@ -527,23 +542,48 @@ void printGates(FILE *f, MultiGate* gate)
  * TODO: Test extensively
  * will do
  */
-int writeFile(char* fileName, MultiGate* endGate, Output* output){
+int writeFile(char* fileName, MultiGate* endGate, Input** input, int inputCount, Output* output){
+
+    printf("\nOutputting to file: %s\n", fileName);
 
     FILE *f = fopen(fileName, "w");
     if (f == NULL)
     {
         printf("Error opening file!\n");
+        return -1;
     }
 
 
-    fprintf(f, "Gates :\nName\tType\tInputGates\n");
-    for(int i = 0; i < endGate->inputGatesCount; i++) {
-        printGates(f, endGate);
+    fprintf(f, "Gates:\nName\tType\tInputGates\n");
+    printGatesToFile(f, endGate);
+
+    fprintf(f, "\nOUTPUT:\n");
+    fprintf(f, "[input] -> [output]\n");
+    for (int i = 0; i < inputCount; ++i) { //for each output write
+        for (int j = 0; j < input[i]->size; ++j) {
+            fprintf(f, "%d", input[i]->value[j]);
+        }
+
+        fprintf(f," -> ");
+
+        for (int k = 0; k < output[i].size; ++k) {
+            fprintf(f, "%d", output[i].value[k]);
+        }
+
+        fprintf(f,"\n");
     }
-    fprintf(f, "OUTPUT:\n");
-    for (int i = 0; i < output->size; ++i) { //for each output write
-        fprintf(f,"%d ", output->value[i]);
+
+    printf("Write to file complete.\n");
+
+    return 0;
+}
+
+int cleanUpGatesInHeap(void){
+    for (int i = 0; i < gatesCacheCount; ++i) {
+        free(gatesCache[i]);
     }
+
+    resetGlobals();
 
     return 0;
 }

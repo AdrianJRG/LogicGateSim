@@ -1,0 +1,16 @@
+Gates:
+Name	Type	InputGates
+gate2	4		3 {gate1, gate3, $3}
+gate1	3		1 {$1}
+gate3	1		2 {$1, $2}
+
+OUTPUT:
+[input] -> [output]
+000 -> 100
+001 -> 101
+010 -> 100
+011 -> 101
+100 -> 100
+101 -> 101
+110 -> 110
+111 -> 111

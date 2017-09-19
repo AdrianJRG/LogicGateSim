@@ -17,7 +17,7 @@ void test_showTree(void){
 }
 
 void test_loadFromFile(void){
-    int errors = loadFromFile(fileInput);
+    int errors = loadFromFile(fileInput, 0);
 
     TEST_ASSERT_EQUAL_INT(0, errors);
     TEST_ASSERT_EQUAL_STRING("gate2", endGate.name);
@@ -117,7 +117,7 @@ void test_findInputLocations(void){
 }
 
 void test_simulate(void){
-    int errors = loadFromFile(fileInput);
+    int errors = loadFromFile(fileInput, 0);
     errors += simulate();
     TEST_ASSERT_EQUAL_INT(0, errors);
 

@@ -318,7 +318,7 @@ void test_readFile(void){
     Input** pInput = malloc(80 * sizeof(Input*));
     int inputCount = 0;
 
-    int errors = readFile(fileInput, &endGate, pInput, &inputCount);
+    int errors = readFile(fileInput, &endGate, pInput, &inputCount, 0);
 
     TEST_ASSERT_EQUAL_INT(0, errors);
     TEST_ASSERT_EQUAL_STRING("gate2", gatesCache[1]->name);
