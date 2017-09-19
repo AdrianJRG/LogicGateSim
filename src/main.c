@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
 		for (i = 1; i < argc; i++) {
 			if (strcmp("-v", argv[i]) == 0) {
 				verbose = 1;
+                continue;
 			}
 			if (strcmp("--version", argv[i]) == 0) {
 				return credit();

@@ -580,6 +580,7 @@ int writeFile(char* fileName, MultiGate* endGate, Input** input, int inputCount,
 
 int cleanUpGatesInHeap(void){
     for (int i = 0; i < gatesCacheCount; ++i) {
+        free(gatesCache[i]->name);
         free(gatesCache[i]);
     }
 
