@@ -80,7 +80,6 @@ int saveToFile(char* fileName){
     int errors = 0;
 
     errors += writeFile(fileName, &endGate, inputs, inputCount, outputs);
-
     return errors;
 }
 

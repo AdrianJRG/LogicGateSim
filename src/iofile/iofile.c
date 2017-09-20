@@ -546,7 +546,7 @@ int writeFile(char* fileName, MultiGate* endGate, Input** input, int inputCount,
 
     printf("\nOutputting to file: %s\n", fileName);
 
-    FILE *f = fopen(fileName, "w");
+    FILE *f = fopen(fileName, "w+");
     if (f == NULL)
     {
         printf("Error opening file!\n");
@@ -572,7 +572,7 @@ int writeFile(char* fileName, MultiGate* endGate, Input** input, int inputCount,
 
         fprintf(f,"\n");
     }
-
+    fclose(f);
     printf("Write to file complete.\n");
 
     return 0;
